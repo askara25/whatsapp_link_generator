@@ -2,7 +2,7 @@
 
 A simple, fast, and secure web tool to generate official WhatsApp click-to-chat links (`https://wa.me`). Built strictly following the official WhatsApp API guidelines.
 
-🔗 **[Live Demo](https://github.io)**
+🔗 **[Live Demo](https://askara25.github.io/whatsapp_link_generator/)**
 
 ## ✨ Features
 * 🔒 **100% Client-Side:** No data is sent to a server. Your phone numbers remain completely private.
