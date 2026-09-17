@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>WhatsApp Link • Phone & Username</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(145deg, #0b1120 0%, #1a2639 100%);
+      color: #f1f5f9;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 640px;
+      width: 100%;
+      animation: fadeUp 0.5s ease-out;
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(24px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header p {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .card {
+      background: rgba(20, 30, 48, 0.7);
+      backdrop-filter: blur(12px);
+      border-radius: 32px;
+      padding: 24px;
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      transition: border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .mode-toggle {
+      display: flex;
+      background: #0f172a;
+      border-radius: 60px;
+      padding: 4px;
+      margin-bottom: 24px;
+      border: 1px solid #2d3a4f;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .mode-btn.active {
+      background: #f59e0b;
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .mode-btn:first-child.active { background: #f59e0b; color: #0f172a; }
+    .mode-btn:last-child.active { background: #3b82f6; color: #fff; }
+
+    .mode-btn:not(.active):hover { background: #1e2a41; color: #e2e8f0; }
+
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #cbd5e1;
+    }
+
+    .label-icon { font-size: 18px; }
+
+    .modern-select, .modern-input, .modern-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: #0f172a;
+      border: 1.5px solid #2d3a4f;
+      border-radius: 20px;
+      color: #f1f5f9;
+      font-size: 15px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .modern-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 18px;
+      cursor: pointer;
+    }
+
+    .modern-select:hover, .modern-input:hover, .modern-textarea:hover {
+      border-color: #f59e0b;
+    }
+
+    .modern-select:focus, .modern-input:focus, .modern-textarea:focus {
+      outline: none;
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    }
+
+    .phone-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .phone-wrapper .modern-input { flex: 1; }
+
+    .paste-btn {
+      padding: 12px 18px;
+      background: #1e2a41;
+      border: 1.5px solid #334155;
+      border-radius: 20px;
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .paste-btn:hover {
+      background: #2d3a4f;
+      border-color: #f59e0b;
+      transform: translateY(-1px);
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+    }
+
+    .hint.valid { color: #4ade80; }
+    .hint.invalid { color: #f87171; }
+    .hint.neutral { color: #94a3b8; }
+
+    .char-counter {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 4px;
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .char-counter.warning { color: #fbbf24; }
+    .char-counter.danger { color: #f87171; }
+
+    .generate-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none;
+      border-radius: 60px;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25);
+    }
+
+    .generate-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(245, 158, 11, 0.35);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result-card {
+      background: linear-gradient(135deg, #0f172a, #1a2639);
+      border-radius: 28px;
+      padding: 20px;
+      margin-top: 24px;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      animation: slideIn 0.35s ease-out;
+    }
+
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(-8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .result-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      color: #f59e0b;
+    }
+
+    .copy-badge {
+      font-size: 10px;
+      background: rgba(74, 222, 128, 0.15);
+      padding: 4px 12px;
+      border-radius: 40px;
+      color: #4ade80;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .link-box {
+      background: #0b1120;
+      padding: 14px;
+      border-radius: 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      word-break: break-all;
+      color: #fcd34d;
+      border-left: 3px solid #f59e0b;
+      margin-bottom: 12px;
+    }
+
+    .preview-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: gap 0.2s;
+    }
+
+    .preview-link:hover { gap: 10px; color: #93c5fd; }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .action-btn.primary { background: #22c55e; color: #fff; }
+    .action-btn.secondary { background: #3b82f6; color: #fff; }
+
+    .action-btn.primary:hover:not(:disabled) { background: #16a34a; transform: translateY(-1px); }
+    .action-btn.secondary:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); }
+
+    .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e293b;
+      backdrop-filter: blur(16px);
+      padding: 12px 24px;
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      border-left: 3px solid #f59e0b;
+      z-index: 999;
+      transition: transform 0.3s ease;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #2d3a4f;
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .username-prefix {
+      display: inline-block;
+      background: #1e2a41;
+      padding: 12px 14px;
+      border-radius: 20px 0 0 20px;
+      border: 1.5px solid #2d3a4f;
+      border-right: none;
+      color: #94a3b8;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .username-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .username-wrapper .modern-input {
+      border-radius: 0 20px 20px 0;
+      border-left: none;
+    }
+
+    .username-wrapper .modern-input:focus {
+      border-left: none;
+    }
+
+    .mode-username .phone-wrapper,
+    .mode-username .country-group { display: none; }
+
+    .mode-phone .username-wrapper { display: none; }
+
+    @media (max-width: 480px) {
+      .container { padding: 0; }
+      .card { padding: 16px; }
+      .phone-wrapper { flex-direction: column; }
+      .paste-btn { width: 100%; }
+      .action-buttons { flex-direction: column; }
+      .header h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>💬 WhatsApp Link</h1>
+    <p>Phone number • Username • smart & frictionless</p>
+  </div>
+
+  <div class="card" id="mainCard">
+    <!-- Mode Toggle -->
+    <div class="mode-toggle" id="modeToggle">
+      <button class="mode-btn active" data-mode="phone">📞 Phone</button>
+      <button class="mode-btn" data-mode="username">@ Username</button>
+    </div>
+
+    <!-- Phone mode fields -->
+    <div id="phoneFields">
+      <div class="input-group country-group">
+        <label><span class="label-icon">🌍</span> Country Code</label>
+        <select id="countryCode" class="modern-select">
+          <option value="60">🇲🇾 Malaysia (+60)</option>
+          <option value="65">🇸🇬 Singapore (+65)</option>
+          <option value="62">🇮🇩 Indonesia (+62)</option>
+          <option value="66">🇹🇭 Thailand (+66)</option>
+          <option value="1">🇺🇸 USA/Canada (+1)</option>
+          <option value="44">🇬🇧 UK (+44)</option>
+          <option value="91">🇮🇳 India (+91)</option>
+          <option value="61">🇦🇺 Australia (+61)</option>
+          <option value="81">🇯🇵 Japan (+81)</option>
+          <option value="49">🇩🇪 Germany (+49)</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label><span class="label-icon">📞</span> Phone Number</label>
+        <div class="phone-wrapper">
+          <input type="tel" id="phone" class="modern-input" placeholder="e.g., 0123456789 or +60 12-345 6789" autocomplete="off">
+          <button type="button" class="paste-btn" onclick="pastePhone()">📋 Paste</button>
+        </div>
+        <div id="phoneHint" class="hint neutral">💡 Paste any format — we clean it automatically</div>
+      </div>
+    </div>
+
+    <!-- Username mode fields -->
+    <div id="usernameFields" style="display: none;">
+      <div class="input-group">
+        <label><span class="label-icon">@</span> WhatsApp Username</label>
+        <div class="username-wrapper">
+          <span class="username-prefix">wa.me/@</span>
+          <input type="text" id="usernameInput" class="modern-input" placeholder="username (e.g., john_doe)" autocomplete="off">
+        </div>
+        <div id="usernameHint" class="hint neutral">💡 Enter the username without the @ symbol</div>
+      </div>
+    </div>
+
+    <!-- Message (common) -->
+    <div class="input-group">
+      <label><span class="label-icon">💬</span> Message</label>
+      <textarea id="message" class="modern-textarea" rows="3" placeholder="Type your message here... (max 2000 chars)"></textarea>
+      <div id="charCounter" class="char-counter">0 / 2000</div>
+    </div>
+
+    <button id="generateBtn" class="generate-btn" disabled>
+      <span>⚡</span> Generate & Copy <span>⚡</span>
+    </button>
+  </div>
+
+  <!-- Result -->
+  <div id="resultCard" class="result-card" style="display: none;">
+    <div class="result-header">
+      <span class="result-title">🔗 WhatsApp Link</span>
+      <span class="copy-badge">✓ auto-copied</span>
+    </div>
+    <div id="result" class="link-box"></div>
+    <a id="previewLink" class="preview-link" href="#" target="_blank" style="display: none;">🔍 Open in browser →</a>
+    <div class="action-buttons">
+      <button id="openBtn" class="action-btn primary" onclick="openWhatsApp()" disabled>💬 Open WhatsApp</button>
+      <button id="copyBtn" class="action-btn secondary" onclick="manualCopy()" disabled>📋 Copy again</button>
+    </div>
+    <div class="stats-bar">
+      <span>🔒 Secure • HTTPS</span>
+      <span id="modeIndicator">📱 Phone</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- DOM refs ----------
+  const modeBtns = document.querySelectorAll('.mode-btn');
+  const phoneFields = document.getElementById('phoneFields');
+  const usernameFields = document.getElementById('usernameFields');
+  const phoneInput = document.getElementById('phone');
+  const usernameInput = document.getElementById('usernameInput');
+  const countrySelect = document.getElementById('countryCode');
+  const messageInput = document.getElementById('message');
+  const generateBtn = document.getElementById('generateBtn');
+  const resultCard = document.getElementById('resultCard');
+  const resultBox = document.getElementById('result');
+  const previewLink = document.getElementById('previewLink');
+  const openBtn = document.getElementById('openBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const phoneHint = document.getElementById('phoneHint');
+  const usernameHint = document.getElementById('usernameHint');
+  const charCounter = document.getElementById('charCounter');
+  const modeIndicator = document.getElementById('modeIndicator');
+
+  let currentMode = 'phone'; // 'phone' | 'username'
+
+  // ---------- helpers ----------
+  function showToast(msg, type = 'success') {
+    const old = document.querySelector('.toast');
+    if (old) old.remove();
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `${type === 'success' ? '✅' : '⚠️'} ${msg}`;
+    document.body.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => {
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 300);
+    }, 2400);
+  }
+
+  function extractDigits(str) { return (str || '').replace(/\D/g, ''); }
+
+  function cleanPhone(raw, cc) {
+    let digits = extractDigits(raw);
+    if (!digits) return '';
+    // if starts with country code, remove it
+    if (digits.startsWith(cc)) digits = digits.slice(cc.length);
+    // if starts with 0 (local) remove it
+    else if (digits.startsWith('0')) digits = digits.slice(1);
+    return digits;
+  }
+
+  function isValidPhone(phone, cc) {
+    if (!phone) return false;
+    if (cc === '60') return /^[0-9]{9,10}$/.test(phone);
+    if (cc === '1') return /^[0-9]{10}$/.test(phone);
+    return /^[0-9]{6,15}$/.test(phone);
+  }
+
+  function isValidUsername(name) {
+    if (!name) return false;
+    // username: letters, numbers, underscore, dot, hyphen. 1-30 chars.
+    return /^[a-zA-Z0-9._-]{1,30}$/.test(name);
+  }
+
+  // ---------- validation ----------
+  function validateForm() {
+    const mode = currentMode;
+    let valid = false;
+    let phoneClean = '';
+    let username = '';
+
+    if (mode === 'phone') {
+      const raw = phoneInput.value.trim();
+      const cc = countrySelect.value;
+      const digits = extractDigits(raw);
+      phoneClean = cleanPhone(digits, cc);
+      const isValid = isValidPhone(phoneClean, cc);
+
+      if (!raw) {
+        phoneHint.innerHTML = '💡 Paste any format — we clean it automatically';
+        phoneHint.className = 'hint neutral';
+      } else if (isValid) {
+        let display = phoneClean;
+        if (cc === '60' && display.length >= 9) {
+          if (display.length === 9) display = display.slice(0,2)+'-'+display.slice(2,6)+' '+display.slice(6);
+          else if (display.length === 10) display = display.slice(0,3)+'-'+display.slice(3,6)+' '+display.slice(6);
+        }
+        phoneHint.innerHTML = `✅ Valid • ${display} (${phoneClean.length} digits)`;
+        phoneHint.className = 'hint valid';
+      } else {
+        phoneHint.innerHTML = `⚠️ Invalid (${phoneClean.length} digits) — expected ${cc === '60' ? '9-10' : cc === '1' ? '10' : '6-15'}`;
+        phoneHint.className = 'hint invalid';
+      }
+      valid = isValid && messageInput.value.length > 0 && messageInput.value.length <= 2000;
+    } else {
+      // username mode
+      username = usernameInput.value.trim();
+      const ok = isValidUsername(username);
+      if (!username) {
+        usernameHint.innerHTML = '💡 Enter the username without the @ symbol';
+        usernameHint.className = 'hint neutral';
+      } else if (ok) {
+        usernameHint.innerHTML = `✅ Valid username: @${username}`;
+        usernameHint.className = 'hint valid';
+      } else {
+        usernameHint.innerHTML = '⚠️ Invalid username (letters, numbers, _, . , -)';
+        usernameHint.className = 'hint invalid';
+      }
+      valid = ok && messageInput.value.length > 0 && messageInput.value.length <= 2000;
+    }
+
+    // message counter
+    const len = messageInput.value.length;
+    charCounter.innerText = `${len} / 2000`;
+    charCounter.className = 'char-counter' + (len > 1800 ? ' danger' : len > 1500 ? ' warning' : '');
+
+    generateBtn.disabled = !valid;
+    return valid;
+  }
+
+  // ---------- generate link ----------
+  function generateLink() {
+    const mode = currentMode;
+    let full = '';
+    let encodedMsg = encodeURIComponent(messageInput.value.trim());
+
+    if (mode === 'phone') {
+      const cc = countrySelect.value;
+      const raw = phoneInput.value.trim();
+      const digits = extractDigits(raw);
+      const clean = cleanPhone(digits, cc);
+      if (!clean) return null;
+      full = `https://wa.me/${cc}${clean}?text=${encodedMsg}`;
+    } else {
+      const username = usernameInput.value.trim();
+      if (!isValidUsername(username)) return null;
+      full = `https://wa.me/@${username}?text=${encodedMsg}`;
+    }
+    return full;
+  }
+
+  // ---------- generate & copy ----------
+  function generateAndCopy() {
+    if (!validateForm()) {
+      showToast('Please fill in valid fields', 'error');
+      return;
+    }
+    const link = generateLink();
+    if (!link) {
+      showToast('Invalid input', 'error');
+      return;
+    }
+
+    // show result
+    resultBox.innerText = link;
+    resultCard.style.display = 'block';
+    previewLink.href = link;
+    previewLink.style.display = 'inline-flex';
+    openBtn.disabled = false;
+    copyBtn.disabled = false;
+
+    // indicator
+    modeIndicator.innerText = currentMode === 'phone' ? '📱 Phone' : '@ Username';
+
+    // auto copy
+    navigator.clipboard.writeText(link).then(() => {
+      showToast('🎉 Link copied to clipboard!', 'success');
+      resultBox.style.transform = 'scale(1.02)';
+      setTimeout(() => resultBox.style.transform = '', 200);
+    }).catch(() => {
+      showToast('⚠️ Auto-copy failed, but link is ready', 'error');
+    });
+  }
+
+  function manualCopy() {
+    const txt = resultBox.innerText;
+    if (!txt) { showToast('Generate a link first', 'error'); return; }
+    navigator.clipboard.writeText(txt).then(() => showToast('📋 Copied again!', 'success'))
+      .catch(() => showToast('Copy failed', 'error'));
+  }
+
+  function openWhatsApp() {
+    const link = resultBox.innerText;
+    if (!link) { showToast('Generate a link first', 'error'); return; }
+    window.open(link, '_blank');
+  }
+
+  // ---------- paste phone ----------
+  async function pastePhone() {
+    try {
+      const text = await navigator.clipboard.readText();
+      phoneInput.value = text;
+      validateForm();
+      showToast('📋 Pasted!', 'success');
+    } catch { showToast('Clipboard access denied', 'error'); }
+  }
+
+  // ---------- mode switching ----------
+  function setMode(mode) {
+    currentMode = mode;
+    // toggle UI
+    if (mode === 'phone') {
+      phoneFields.style.display = 'block';
+      usernameFields.style.display = 'none';
+      document.getElementById('mainCard').classList.remove('mode-username');
+      document.getElementById('mainCard').classList.add('mode-phone');
+    } else {
+      phoneFields.style.display = 'none';
+      usernameFields.style.display = 'block';
+      document.getElementById('mainCard').classList.remove('mode-phone');
+      document.getElementById('mainCard').classList.add('mode-username');
+    }
+    // active button
+    modeBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    // re-validate & hide old result
+    resultCard.style.display = 'none';
+    validateForm();
+  }
+
+  // ---------- event listeners ----------
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.mode;
+      if (mode !== currentMode) setMode(mode);
+    });
+  });
+
+  phoneInput.addEventListener('input', validateForm);
+  countrySelect.addEventListener('change', validateForm);
+  usernameInput.addEventListener('input', validateForm);
+  messageInput.addEventListener('input', function() {
+    if (this.value.length > 2000) {
+      this.value = this.value.slice(0, 2000);
+      showToast('Message limit 2000 chars', 'error');
+    }
+    validateForm();
+  });
+
+  generateBtn.addEventListener('click', generateAndCopy);
+
+  // enter key on inputs triggers generate
+  [phoneInput, usernameInput, messageInput].forEach(el => {
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !generateBtn.disabled) {
+        e.preventDefault();
+        generateAndCopy();
+      }
+    });
+  });
+
+  // init
+  setMode('phone');
+</script>
+</body>
+</html>
